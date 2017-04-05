@@ -1,0 +1,58 @@
+package GameData;
+
+import java.awt.*;
+import javax.swing.*;
+
+
+public class MainActivity extends JFrame {
+	
+	GameData gameData = new GameData();
+
+    String serverurl = "http://midas.ktk.bme.hu/poti/";
+
+    int playerNO =0;
+
+    int refresh = 0;
+
+    int upstat;
+    JButton startbtn;
+    
+
+	public MainActivity() {
+	    // Create panel p1 for the buttons and set GridLayout
+	    JPanel p1 = new JPanel();
+	    p1.setLayout(new GridLayout(4, 3));
+
+	    JButton buttons[]=new JButton[9];
+	    // Add buttons to the panel
+	    for (int i = 1; i <= 9; i++) {
+	      p1.add(buttons[i]);
+	    }
+
+	    p1.add(new JButton("START"));
+	    p1.add(new JButton("REFRESH"));
+	    
+
+	    // Create panel p2 to hold a text field and p1
+	    JPanel p2 = new JPanel(new BorderLayout());
+	    p2.add(new JTextField("Time to be displayed here"),
+	      BorderLayout.NORTH);
+	    p2.add(p1, BorderLayout.CENTER);
+
+	    // add contents into the frame
+	    add(p2, BorderLayout.CENTER);
+
+	  }
+
+	  /** Main method */
+	  public static void main(String[] args) {
+	    MainActivity frame = new MainActivity();
+	    frame.setTitle("TicTacToe");
+	    frame.setSize(1000, 1000);
+	    frame.setLocationRelativeTo(null); // Center the frame
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.setVisible(true);
+	  }
+}
+
+

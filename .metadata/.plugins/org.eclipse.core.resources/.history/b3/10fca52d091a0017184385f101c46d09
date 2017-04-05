@@ -1,0 +1,110 @@
+package GameData;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+
+
+public class MainActivity extends JFrame {
+	
+	GameData gameData = new GameData();
+
+    String serverurl = "http://midas.ktk.bme.hu/poti/";
+
+    int playerNO =0;
+    int refresh = 0;
+    int upstat;
+    
+    JButton buttons_global[]=new JButton[9];
+    
+    JTextArea tvP2 = new JTextArea();
+    JTextArea tverror = new JTextArea();
+    JTextArea tvplayerid = new JTextArea();
+    
+
+	public MainActivity() {
+	    // Create panel p1 for the buttons and set GridLayout
+	    JPanel p1 = new JPanel();
+	    p1.setLayout(new GridLayout(4, 3));
+
+	    JButton buttons[]=new JButton[9];
+	    
+	    // Add buttons to the panel
+	    for (int i = 0; i <= 8; i++) {
+	    	buttons_global[i]=new JButton("");
+	        p1.add(buttons_global[i]);
+	    }
+
+	    JButton Startbtn= new JButton("START");
+	    JButton Refreshbtn= new JButton("REFRESH");
+	    p1.add(Startbtn);
+	    p1.add(Refreshbtn);
+	    
+
+	    // Create panel p2 to hold a text field and p1
+	    JPanel p2 = new JPanel(new BorderLayout());
+	    p2.add(tvP2,BorderLayout.NORTH);
+	    p2.add(tverror,BorderLayout.NORTH);
+	    p2.add(tvplayerid,BorderLayout.NORTH);
+	    p2.add(p1, BorderLayout.CENTER);
+
+	    // add contents into the frame
+	    add(p2, BorderLayout.CENTER);
+	    
+	    //updateData();
+	    
+	    Startbtn.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	          drawMap(gameData);
+	          gameData.setPlayerNO(gameData.getAvaible());
+	          
+	          if (gameData.getAvaible()==0) {
+	        	  
+	        	  
+	          }
+	        }
+	      });
+	    
+	    
+	    
+	    
+
+	  }
+	
+	public void drawMap (GameData gd) {
+        for (int i = 0; i<9;i++)
+        {
+            buttons_global[i].setText( XorO(gd.getMap()[i]) );
+            if(! "".equals(XorO(gd.getMap()[i])))
+            {
+                buttons_global[i].setEnabled(false);
+            }
+
+            else {buttons_global[i].setEnabled(true); }
+        }
+    }
+	
+	public String XorO (int e)
+    {
+        String val= "";
+        if (e == 1) val = "X";
+        if (e == 2) val = "O";
+        return val;
+    }
+	
+
+
+	  /** Main method */
+	  public static void main(String[] args) {
+	    MainActivity frame = new MainActivity();
+	    frame.setTitle("TicTacToe");
+	    frame.setSize(1000, 1000);
+	    frame.setLocationRelativeTo(null); // Center the frame
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.setVisible(true);
+	  }
+}
+
+

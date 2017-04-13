@@ -4,12 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.io.*;
-
+import java.util.*;
+import java.util.Timer;
 
 
 public class MainActivity extends JFrame {
-	
 	GameData gameData = new GameData();
 
     String serverurl = "http://midas.ktk.bme.hu/poti/";
@@ -25,8 +27,8 @@ public class MainActivity extends JFrame {
     JTextArea tvplayerid = new JTextArea();
     TextField etP1=new TextField("theLegend27");
     
-
 	public MainActivity() throws Exception {
+		 
 	    // Create panel p1 for the buttons and set GridLayout
 	    JPanel p1 = new JPanel();
 	    p1.setLayout(new GridLayout(4, 3));
@@ -61,6 +63,31 @@ public class MainActivity extends JFrame {
 	    add(p2, BorderLayout.CENTER);
 	    
 	    updateData();
+		 
+		 Timer uploadCheckerTimer = new Timer(true);
+		 uploadCheckerTimer.scheduleAtFixedRate(
+		     new TimerTask() {
+		       public void run() { try {
+				updateData();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		       if (gameData.getPlayerNO() == 1 && gameData.getAvaible()== 2)
+               {
+                   tvP2.setText(gameData.getP2());
+                   drawMap(gameData);
+                   tverror.setText("your turn P1");
+
+               }
+
+               if (gameData.getPlayerNO() == 2 && gameData.getAvaible()== 3)
+               {
+                   drawMap(gameData);
+                   tverror.setText("your turn P2");
+               }
+		       }
+		     }, 0, 1000);
 	    
 	    Startbtn.addActionListener(new ActionListener() {
 	        @Override
@@ -158,7 +185,6 @@ public class MainActivity extends JFrame {
                 }
             });
         }
-	    
 	    
 	    Refreshbtn.addActionListener(new ActionListener() {
 	    	 @Override
@@ -299,7 +325,7 @@ public class MainActivity extends JFrame {
 		 if (response.endsWith("OK")) upstat=1;
 		 else upstat=0;
 	 }
-
+	 
 	  /** Main method */
 	  public static void main(String[] args) throws Exception {
 	    MainActivity frame = new MainActivity();

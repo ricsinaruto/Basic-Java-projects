@@ -10,7 +10,9 @@ public class GameData {
     protected int PlayerNO;
     private String P1;
     private String P2;
-    private int[] Map={0,0,0,0,0,0,0,0,0};  //0: empty 1: x 2: O
+    
+    //0: empty     1: x     2: O
+    private int[] Map={0,0,0,0,0,0,0,0,0}; 
     private  String ErrorStr;
     private String serverurl = "http://midas.ktk.bme.hu/poti/";
     private int Refresh;
@@ -24,6 +26,7 @@ public class GameData {
 
      */
 
+    //variable which describes the state of the game
     public int getAvaible() {
         return Avaible;
     }
@@ -32,6 +35,7 @@ public class GameData {
         Avaible = avaible;
     }
 
+    //name of player 1
     public String getP1() {
         return P1;
     }
@@ -40,6 +44,7 @@ public class GameData {
         P1 = p1;
     }
 
+    //name of player 2
     public String getP2() {
         return P2;
     }
@@ -48,6 +53,8 @@ public class GameData {
         P2 = p2;
     }
 
+    //the map shows the state of the game,
+    //where X and O-s are currently
     public int[] getMap() {
         return Map;
     }
@@ -56,11 +63,14 @@ public class GameData {
         Map = map;
     }
 
+    //set the individual values of the map
     public  void setCell(int cell, int val) { Map[cell] = val; }
 
     public String getErrorStr() { return ErrorStr; }
 
-    public void setErrorStr(String errorStr) { ErrorStr = errorStr; }
+    public void setErrorStr(String errorStr) { 
+    	ErrorStr = errorStr; 
+    	}
 
     public int getPlayerNO() {
         return PlayerNO;
@@ -84,25 +94,30 @@ public class GameData {
     	Refresh = refresh;
     }
     
+    // method to get the coordinates of cells
+    // in order to draw a line on the winning row/column/diagonal
     public int[] getLine_coord() {
     	int[] coords={0,0};
     	for (int i = 0; i < 3; i++) {
             {
-                if (Map[3*i] != 0 && Map[3*i] == Map[3*i+1] && Map[3*i] == Map[3*i+2]) {
+                if (Map[3*i] != 0 && Map[3*i] == Map[3*i+1] && 
+                		Map[3*i] == Map[3*i+2]) {
                 	coords[0]=3*i;
                 	coords[1]=3*i+2;
                     
-                } //sorok ellenorzese
-                if (Map[i] != 0 && Map[i] == Map[i+3] && Map[i] == Map[i+6]) {
+                } //check rows
+                if (Map[i] != 0 && Map[i] == Map[i+3] &&
+                		Map[i] == Map[i+6])
+                {
                 	coords[0]=i;
                 	coords[1]=i+6;
-                } //oszlopok ellenorzes
+                } //check columns
             }
         }
     	if (Map[4] != 0 && Map[4] == Map[0] && Map[4] == Map[8]) {
             coords[0]=0;
             coords[1]=8;
-        } //atlok ellenorzese
+        } //check diagonals
     	if (Map[4]!=0 && Map[4] == Map[2] && Map[4] == Map[6]) {
     		coords[0]=2;
             coords[1]=6;
@@ -110,6 +125,7 @@ public class GameData {
     	return coords;
     }
     
+    // method to generate the game data from the url string
     public GameData datafromurl(String str) {
         GameData gd = new GameData();
 
@@ -128,35 +144,38 @@ public class GameData {
         return gd;
     }
 
+    // method to check whether a player has won or not
+    // return the player who won
     public int hasSomeoneWon() {
         int winner = 0;
         for (int i = 0; i < 3; i++) {
             {
-                if (Map[3*i] != 0 && Map[3*i] == Map[3*i+1] && Map[3*i] == Map[3*i+2]) {
+                if (Map[3*i] != 0 && Map[3*i] == Map[3*i+1] && 
+                		Map[3*i] == Map[3*i+2]) {
                     winner = Map[3*i];
-                } //sorok ellenorzese
-                if (Map[i] != 0 && Map[i] == Map[i+3] && Map[i] == Map[i+6]) {
+                } //check rows
+                if (Map[i] != 0 && Map[i] == Map[i+3] &&
+                		Map[i] == Map[i+6])
+                {
                     winner = Map[i];
-                } //oszlopok ellenorzes
+                } //check columns
             }
         }
-        if ((Map[4] != 0 && (Map[4] == Map[0] && Map[4] == Map[8]) ||
-                (Map[4] == Map[2] && Map[4] == Map[6]))) {
+        if ((Map[4] != 0 && (Map[4] == Map[0] && Map[4] == Map[8]) 
+        		|| (Map[4] == Map[2] && Map[4] == Map[6]))) {
             winner = Map[4];
-        } //atlok ellenorzese
+        } //check diagonals
         return winner;
     }
 
+    // method to check whether the game has ended
     public boolean isGameEnd() {
         boolean ended = true;
         for (int i = 0; i < 9; i++) {
             if (Map[i] == 0) {
                 ended = false;
             }
-        } //ha nincs tobb ures mezo, akkor igaz
+        } 
         return  ended;
     }
-
-
 }
-

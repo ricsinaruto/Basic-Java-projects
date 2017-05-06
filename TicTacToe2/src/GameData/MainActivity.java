@@ -12,8 +12,9 @@ import java.util.Timer;
 
 import java.awt.geom.*;
 
-
+//main class which extends jframe
 public class MainActivity extends JFrame {
+	// initialize gamedata class
 	GameData gameData = new GameData();
 
     String serverurl = "http://midas.ktk.bme.hu/poti/";
@@ -27,38 +28,34 @@ public class MainActivity extends JFrame {
     int upstat;
     Line2D lin;
     
+    //initialize buttons
     JButton buttons_global[]=new JButton[9]; //btnMap
     JButton Startbtn= new JButton("START");
     JButton Refreshbtn= new JButton("");
     JButton Restartbtn= new JButton("RESTART");
     
+    //initialize text areas and fields
     JTextArea tvP2 = new JTextArea();
     JTextArea tverror = new JTextArea();
     JTextArea tvplayerid = new JTextArea();
     TextField etP1=new TextField("theLegend27");
     JLabel youWon=new JLabel("");
     
-    // Create panel p1 for the buttons and set GridLayout
+    // Create panel p1 for the buttons
     JPanel p1 = new JPanel();
     JPanel textLayout=new JPanel();
     JPanel p2 = new JPanel(new BorderLayout());
-    
- 
-    
    
+    //we need graphics to draw line2D
     public void paint(Graphics g) {
-    	
-    	super.paint(g);  // fixes the immediate problem.
+    	super.paint(g); 
         Graphics2D g2 = (Graphics2D) g;
         if (line) {
         	drawLine(g2);
         }
-        
     }
 
-    
-
-    
+    // constructor of main activity
 	public MainActivity() throws Exception {
 		 
 		p1.setLayout(new GridLayout(4, 3));
@@ -73,6 +70,7 @@ public class MainActivity extends JFrame {
 	    }
 
 	   
+	    //add other buttons
 	    p1.add(Startbtn);
 	    p1.add(Refreshbtn);
 	    p1.add(Restartbtn);
@@ -81,11 +79,8 @@ public class MainActivity extends JFrame {
 	    Refreshbtn.setFont(new Font("Arial", Font.PLAIN, 50));
 	    Startbtn.setFont(new Font("Arial", Font.PLAIN, 50));
 	    Restartbtn.setFont(new Font("Arial", Font.PLAIN, 50));
-	    //Refreshbtn.add(youWon);
-	    
 
-	    // Create panel p2 to hold a text field and p1
-	    
+	    // create text layout for the text areas and fields
 	    textLayout.setLayout(new GridLayout(1, 4));
 	    textLayout.add(tvP2);
 	    textLayout.add(tverror);
@@ -93,18 +88,17 @@ public class MainActivity extends JFrame {
 	    textLayout.add(etP1);
 	    
 	    
-	    
+	    // Create panel p2 to hold a  text layout and p1
 	    p2.add(textLayout,BorderLayout.NORTH);
 	    p2.add(p1, BorderLayout.CENTER);
-	   
-	    //p2.add(youWon, BorderLayout.CENTER);
 	    
-
 	    // add contents into the frame
 	    add(p2);
 	    
+	    // update data from server
 	    updateData();
 	    
+	    // add action listener and events to the start button
 	    Startbtn.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
@@ -149,7 +143,6 @@ public class MainActivity extends JFrame {
                   refresh = 1;
 
                   for (int i =0; i <9;i++) { buttons_global[i].setEnabled(false); }
-
               }
 	          
 	          else {
@@ -160,6 +153,7 @@ public class MainActivity extends JFrame {
 	        }
 	      });
 	    
+	    // add action listener and events to the restart button
 	    Restartbtn.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {  
@@ -175,6 +169,7 @@ public class MainActivity extends JFrame {
 	        }
 	      });
 	    
+	    // add action listener for all the buttons in the game
 	    for (int i =0 ; i < 9;i++)
         {
             final int finalI = i;
@@ -195,7 +190,6 @@ public class MainActivity extends JFrame {
 						}
 
                         for (int i =0; i <9;i++) { buttons_global[i].setEnabled(false); }
-
                     }
 
                     if (gameData.getPlayerNO() == 2 && gameData.getAvaible()== 3 )
@@ -211,8 +205,6 @@ public class MainActivity extends JFrame {
 							e1.printStackTrace();
 						}
 
-
-
                         for (int i =0; i <9;i++) { buttons_global[i].setEnabled(false); }
                     }
 
@@ -220,6 +212,7 @@ public class MainActivity extends JFrame {
             });
         }
 	    
+	    // timer which is used to update data from the server every 1 second
 	    Timer uploadCheckerTimer = new Timer(true);
 		 uploadCheckerTimer.scheduleAtFixedRate(
 		     new TimerTask() {
@@ -229,7 +222,8 @@ public class MainActivity extends JFrame {
 		    	   updateAll();
 		    	   gameData.setPlayerNO_d(tempPlayerNO);
 		    	   if (tvP2.getText().equals("")) {
-		    		   if (gameData.hasSomeoneWon()==0 && gameData.isGameEnd()==false) Startbtn.setEnabled(true);
+		    		   if (gameData.hasSomeoneWon()==0 && gameData.isGameEnd()==false) 
+		    			   Startbtn.setEnabled(true);
 		    		   for (int i =0; i <9;i++) { buttons_global[i].setEnabled(false); }
 		    	   }
 		    	   if (gameData.getRefresh()!=0)
@@ -250,34 +244,9 @@ public class MainActivity extends JFrame {
 		    	   }
 		       }
 		     }, 0, 1000);
-	    
-	    /*Refreshbtn.addActionListener(new ActionListener() {
-	    	 @Override
-		     public void actionPerformed(ActionEvent e) {
-	    		 try {
-					updateData();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-	    		 
-	    		 if (gameData.getPlayerNO() == 1 && gameData.getAvaible()== 2)
-	                {
-	                    tvP2.setText(gameData.getP2());
-	                    drawMap(gameData);
-	                    tverror.setText("your turn P1");
-
-	                }
-
-	                if (gameData.getPlayerNO() == 2 && gameData.getAvaible()== 3)
-	                {
-	                    drawMap(gameData);
-	                    tverror.setText("your turn P2");
-	                }
-	    	 }
-        });*/
 	}
 	    
+	// main update function, to get current state of the game from the server
 	public void updateAll() {
 	    try {
 	    	updateData();
@@ -285,12 +254,6 @@ public class MainActivity extends JFrame {
 	    	// TODO Auto-generated catch block
 	    	e.printStackTrace();
 	    }
-	    
-	    
-	    if (gameData.getRefresh()!=0 || gameData.getPlayerNO()!=gameData.getRefresh()) {
-	    	//VALAMI
-	    }
-	    
 	    
 	    if (gameData.hasSomeoneWon()!=0 || gameData.isGameEnd()) {
 	    	switch (gameData.hasSomeoneWon()) 
@@ -313,22 +276,29 @@ public class MainActivity extends JFrame {
 		    	    	// TODO Auto-generated catch block
 		    	    	e.printStackTrace();
 		    	    }
-	    			Refreshbtn.setText("YOU LOST");
-	    			
+	    			Refreshbtn.setText("YOU LOST");	
 	    		}
+	    		
+	    		// get coordinates to draw the winning line
 	    		line=true;
 	    		int coords[]={0,0};
 	    		coords=gameData.getLine_coord();
+	    		
 	    		line_coordx[0]=buttons_global[coords[0]].getLocation().x+25;
 	    		line_coordx[1]=buttons_global[coords[0]].getLocation().y+80;
-	    		line_coordy[0]=buttons_global[coords[1]].getLocation().x+buttons_global[coords[1]].getWidth();
-	    		line_coordy[1]=buttons_global[coords[1]].getLocation().y+55+buttons_global[coords[1]].getHeight();
+	    		line_coordy[0]=buttons_global[coords[1]].getLocation().x+
+	    				buttons_global[coords[1]].getWidth();
+	    		line_coordy[1]=buttons_global[coords[1]].getLocation().y+55+
+	    				buttons_global[coords[1]].getHeight();
 	    		
 	    		repaint();
 	    		drawMap(gameData);
+	    		
+	    		// we prohibit the further use of buttons after someone has won
 	    		Startbtn.setEnabled(false);
 	    		for (int i =0; i <9;i++) { buttons_global[i].setEnabled(false); }
 	    		break;
+	    		
 	    	case 2:
 	    		tverror.setText("Winner: P2, "+gameData.getP2());
 	    		if (gameData.getPlayerNO()==2) {
@@ -338,7 +308,6 @@ public class MainActivity extends JFrame {
 		    	    	// TODO Auto-generated catch block
 		    	    	e.printStackTrace();
 		    	    }
-	    			
 	    			Refreshbtn.setText("YOU WON");
 	    		}
 	    		else {
@@ -350,18 +319,23 @@ public class MainActivity extends JFrame {
 		    	    }
 	    			Refreshbtn.setText("YOU LOST");
 	    		}
+	    		
+	    		// get coordinates to draw the winning line
 	    		line=true;
 	    		coords=gameData.getLine_coord();
 	    		
 	    		line_coordx[0]=buttons_global[coords[0]].getLocation().x+25;
 	    		line_coordx[1]=buttons_global[coords[0]].getLocation().y+80;
-	    		line_coordy[0]=buttons_global[coords[1]].getLocation().x+buttons_global[coords[1]].getWidth();
-	    		line_coordy[1]=buttons_global[coords[1]].getLocation().y+55+buttons_global[coords[1]].getHeight();
+	    		line_coordy[0]=buttons_global[coords[1]].getLocation().x+
+	    				buttons_global[coords[1]].getWidth();
+	    		line_coordy[1]=buttons_global[coords[1]].getLocation().y+55+
+	    				buttons_global[coords[1]].getHeight();
 	    		repaint();
 	    		drawMap(gameData);
 	    		for (int i =0; i <9;i++) { buttons_global[i].setEnabled(false); }
 	    		Startbtn.setEnabled(false);
 	    		break;
+	    		
 	    	default:
 	    		tverror.setText("Game Over");
 	    		line=false;
@@ -370,16 +344,14 @@ public class MainActivity extends JFrame {
 	    		Refreshbtn.setText("IT'S A TIE");
 	    		break;
 	    	}
-	    }else
-	    {
-	    	if (gameData.getPlayerNO() == 1 && gameData.getAvaible()== 2)
-	    	{
+	    }
+	    else {
+	    	if (gameData.getPlayerNO() == 1 && gameData.getAvaible()== 2) {
 	    		tvP2.setText(gameData.getP2());
 	    		drawMap(gameData);
 	    		tverror.setText("your turn P1");
 	    	}
-	    	if (gameData.getPlayerNO() == 2 && gameData.getAvaible()== 3)
-	    	{
+	    	if (gameData.getPlayerNO() == 2 && gameData.getAvaible()== 3) {
 	    		drawMap(gameData);
 	    		tverror.setText("your turn P2");
 	    	}
@@ -388,6 +360,7 @@ public class MainActivity extends JFrame {
 	    }
 	}
 	    
+	// clean the data if the game has restarted
 	    public void restarted() {
 	    	tvP2.setText("");
 	    	tvplayerid.setText("");
@@ -409,12 +382,15 @@ public class MainActivity extends JFrame {
 	    	etP1.setEnabled(true);
 	    }
 	    
+	// draw the line if someone won
 	public void drawLine(Graphics2D g) {
         g.setStroke(new BasicStroke(20));
-		lin = new Line2D.Float(line_coordx[0], line_coordx[1], line_coordy[0], line_coordy[1]);
+		lin = new Line2D.Float(line_coordx[0], line_coordx[1], 
+				line_coordy[0], line_coordy[1]);
         g.draw(lin);
 	}
 	    
+	// get the data from the url string and put it in the gamedata class
 	public GameData datafromurl(String str)
     {
         GameData gd = new GameData();
@@ -433,18 +409,14 @@ public class MainActivity extends JFrame {
         gd.setMap(asd);
         gd.setRefresh(Integer.parseInt(parts[12]));
 
-
         return gd;
     }
 	
-	
-	
+	// update all the buttons corresponding to the map
 	public void drawMap (GameData gd) {
-        for (int i = 0; i<9;i++)
-        {
+        for (int i = 0; i<9;i++) {
             buttons_global[i].setText( XorO(gd.getMap()[i]) );
-            if(! "".equals(XorO(gd.getMap()[i])))
-            {
+            if(! "".equals(XorO(gd.getMap()[i]))) {
                 buttons_global[i].setEnabled(false);
             }
 
@@ -452,31 +424,26 @@ public class MainActivity extends JFrame {
         }
     }
 	
-	public String XorO (int e)
-    {
+	public String XorO (int e) {
         String val= "";
         if (e == 1) val = "X";
         if (e == 2) val = "O";
         return val;
     }
 	
-	
-	public void draw (GameData gd)
-    {
+	// set the text of the buttons according to the map
+	public void draw (GameData gd) {
         for (int i = 0; i<9;i++) {
             buttons_global[i].setText( XorO(gd.getMap()[i]) );
-
         }
-
     }
 	
-	 public String generateURL(GameData gd)
-	    {
+	// generate url string
+	 public String generateURL(GameData gd) {
 	        String generated;
 	        String MAP ="";
-	        for(int i = 0; i <9;i++)
-	        {
-
+	        
+	        for(int i = 0; i <9;i++) {
 	            MAP = MAP+ Integer.toHexString(gd.getMap()[i])+ ";" ;
 	        }
 
@@ -484,16 +451,14 @@ public class MainActivity extends JFrame {
 	            generated = "http://midas.ktk.bme.hu/poti/?csv=" + gameData.getAvaible() + ";" + gd.getP1() + ";waitingforplayer2;" + MAP + gameData.getRefresh() + ";";
 	        }
 
-	        else
-	        {
+	        else  {
 	            generated = "http://midas.ktk.bme.hu/poti/?csv=" + gameData.getAvaible() + ";" + gd.getP1() + ";" + gd.getP2() + ";" + MAP + gameData.getRefresh() + ";";
 	        }
-
 
 	        return generated;
 	    }
 	 
-     //url reader
+     //url reader to get the url string
 	 public static class URLConnectionReader {
 		    public static String getText(String url) throws Exception {
 		        URL website = new URL(url);
@@ -534,9 +499,7 @@ public class MainActivity extends JFrame {
 		         public void run() {
 		        	 
 					try {
-						
 						MainActivity frame = new MainActivity();
-						
 						
 					    frame.setTitle("TicTacToe");
 					    frame.setSize(1000, 1000);
@@ -552,8 +515,5 @@ public class MainActivity extends JFrame {
 					}
 		         }
 		     });
-	    
 	  }
 }
-
-
